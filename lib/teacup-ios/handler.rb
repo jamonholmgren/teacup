@@ -12,7 +12,12 @@ module Teacup
       NSLog "Calling target.#{setter}(#{value.inspect})" if target.respond_to? :debug and target.debug
       target.send(setter, value)
     else
-      NSLog "TEACUP WARNING: Can't apply #{setter.inspect}#{assign and " or " + assign.inspect or ""} to #{target.inspect}"
+      if setter.include?("_")
+        camel_method = setter.to_s.split('_').map{|e| e.capitalize}.join.sub(/^[A-Z]/) {|f| f.downcase }
+        apply_method(target, assign, camel_method, value)
+      else
+        NSLog "TEACUP WARNING: Can't apply #{setter.inspect}#{assign and " or " + assign.inspect or ""} to #{target.inspect}"
+      end
     end
   end
 
